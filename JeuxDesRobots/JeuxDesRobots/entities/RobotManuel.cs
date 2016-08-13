@@ -14,7 +14,8 @@ namespace JeuxDesRobots
 {
 	class RobotManuel : Robot
 	{
-		public Vector2 direction;
+		private Vector2 direction;
+
 
 		/// <summary>
 		/// Permet de gérer les entrées du joueur
@@ -41,11 +42,11 @@ namespace JeuxDesRobots
 
 			if (keyboardState.IsKeyDown(Keys.Left))
 			{
-				 vitesse_rotation=-4f;
+				vitesse_rotation = 4;
 			}
 			else if (keyboardState.IsKeyDown(Keys.Right))
 			{
-				vitesse_rotation = 4f;
+				vitesse_rotation = -4;
 			}
 		}
 
@@ -55,7 +56,7 @@ namespace JeuxDesRobots
 		/// <param name="gameTime">Le GameTime associé à la frame</param>
 		public override void Update(GameTime gameTime)
 		{
-			position += direction * speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+			Position += direction * speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 		}
 
 	}

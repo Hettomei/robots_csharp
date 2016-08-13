@@ -16,38 +16,87 @@ namespace JeuxDesRobots
 	{
 		private PrimitiveBatch primitiveBatch;
 
-		public Vector2 position;
+		private Vector2 position;
+
+		public Vector2 Position
+		{
+			get { return position; }
+			set
+			{
+
+				int i = 0;
+				Vector2 nouvelleEmplacement = value - position;
+				while (i < listePoints.Count)
+				{
+					listePoints[i] += nouvelleEmplacement;
+					i++;
+				}
+				position = value;
+			}
+		}
+
+		public Vector2 pointAviser;
+
 		protected float speed;
+		protected float speedBase;
 		protected float vitesse_rotation;
+		protected float vitesse_rotation_base;
+		protected float angleAviser;
+		protected float angleEnCours;
 		protected Color couleur;
 		protected float robotSize;
-
 
 		#region Tous pour les points
 
 		public List<Vector2> listePoints;
 		//L'ordre DOIT correspondre à enum NomDesPoints !
-		protected Vector2[] modeleRobotPoints = new Vector2[5]{
-			new Vector2(-1, 1), 
-			new Vector2(0, 3),
-			new Vector2(1, 1),
+		//protected Vector2[] modeleRobotPoints = new Vector2[5]{
+		//    new Vector2(-1, 1), 
+		//    new Vector2(0, 3),
+		//    new Vector2(1, 1),
+		//    new Vector2(1, -1),
+		//    new Vector2(-1, -1)
+		//};
+		protected Vector2[] modeleRobotPoints = new Vector2[10]{
+			new Vector2(-1, 3), 
+			new Vector2(-1, -1),
 			new Vector2(1, -1),
-			new Vector2(-1, -1)
+			new Vector2(1, 3),
+			new Vector2(1, 1),
+			new Vector2(-1, 1),
+			new Vector2(0, 1),
+			new Vector2(0, 2),
+			new Vector2(0, 1),
+			new Vector2(-1, 1)
 		};
+		protected int numeroDuPointChaud = 7; // ici le nez donc modeleRobotPoints[1]
 
-		protected enum NomDesPoints //L'ordre est hyper important car ce sera l'ordre de tracage
-		{
-			_1hautGauche, _2nezHautMilieu, _3hautDroit, _4basDroit, _5basGauche
-		}
 		#endregion
 
+		public enum Phase
+		{
+			PasDeTravail, viseUneBrique, transporteUneBrique
+		}
+		public Phase phaseEnCour;
 
-		private Brique laBrique;
+		private Brique _laBrique;
 
 		public Brique LaBrique
 		{
-			get { return laBrique; }
-			set { laBrique = value; }
+			get { return _laBrique; }
+			set
+			{
+				if (value != null)
+				{
+					pointAviser = value.Position;
+					phaseEnCour = Phase.viseUneBrique;
+				}
+				else
+				{
+					phaseEnCour = Phase.PasDeTravail;
+				}
+				_laBrique = value;
+			}
 		}
 
 
@@ -68,14 +117,18 @@ namespace JeuxDesRobots
 		public virtual void Initialize(Vector2 position, Color couleur, float rotation, float robotsize)
 		{
 			this.position = position;
-			this.speed = 0.5f;
-			this.vitesse_rotation = 3f;
+			this.speed = 0.6f;
+			this.speedBase = speed;
+			this.vitesse_rotation = 7f;
+			this.vitesse_rotation_base = this.vitesse_rotation;
 			this.couleur = couleur;
 			this.robotSize = robotsize;
+			this.phaseEnCour = Phase.PasDeTravail;
 
-			this.listePoints = new List<Vector2>(5); //My research shows that capacity can improve performance by nearly two times for adding elements
+			this.listePoints = new List<Vector2>(7); //My research shows that capacity can improve performance by nearly two times for adding elements
 
 			initialiseLaBaseDesPoints(rotation);
+
 		}
 
 		//Enregistre tous les vecteurs à la bonne position de l'écran à la bonne taille en fonction du modele
@@ -85,7 +138,7 @@ namespace JeuxDesRobots
 			{
 				//Multiplie de cette facon car le modele est basé sur un axe classique
 				//C# inverse le Y
-				listePoints.Add(Vector2.Multiply(v, new Vector2(robotSize,-robotSize)) + this.position);
+				listePoints.Add(Vector2.Multiply(v, new Vector2(robotSize, -robotSize)) + this.position);
 			}
 			calculEmplacementPointsApresRotation(rotation);
 		}
@@ -107,18 +160,6 @@ namespace JeuxDesRobots
 					listePoints[i] = AngleHelper.getPointAfterRotate(listePoints[i], position, theta);
 					i++;
 				}
-			}
-		}
-
-		protected void calculEmplacementPointApresDirection(Vector2 v)
-		{
-			position += v;
-
-			int i = 0;
-			while (i < listePoints.Count)
-			{
-				listePoints[i] += v;
-				i++;
 			}
 		}
 

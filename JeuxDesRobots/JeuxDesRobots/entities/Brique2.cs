@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace JeuxDesRobots
 {
-	class Brique : ILoadAndDraw
+	class Brique2 : ILoadAndDraw
 	{
 		private PrimitiveBatch primitiveBatch;
 
@@ -117,6 +117,27 @@ namespace JeuxDesRobots
 		/// <param name="gameTime">Le GameTime associé à la frame</param>
 		public void Update(GameTime gameTime)
 		{
+			//calculEmplacementPointsApresRotation(90);
+			float angleEnDegre = 3;
+			float theta = MathHelper.ToRadians(angleEnDegre);
+
+			Vector2 v = new Vector2(1, 1);
+			Vector2 vAxeX = new Vector2(0, 1);
+
+			v.Normalize();
+			vAxeX.Normalize();
+
+			Console.WriteLine(Vector2.Dot(v,  vAxeX));
+			Console.WriteLine(Math.Acos(Vector2.Dot(v, vAxeX)));
+			Console.WriteLine(MathHelper.ToDegrees((float)Math.Acos(Vector2.Dot(v, vAxeX))));
+
+			int i = 0;
+			while (i < listePoints.Count)
+			{
+				listePoints[i] = AngleHelper.getPointAfterRotate(listePoints[i], position, theta);
+				i++;
+			}
+
 		}
 		public void HandleInput(MouseState mouse)
 		{
