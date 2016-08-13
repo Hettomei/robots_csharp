@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{F365D63F-92E5-48D4-9CFA-950CA4A08399}</ProjectGuid>
+    <ProjectGuid>{4718882C-D8D3-4B9C-9B9A-EA3B86BE7F65}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -14,7 +14,7 @@
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>HiDef</XnaProfile>
-    <XnaCrossPlatformGroupID>f46f369f-327d-4ccd-9639-91ad99297351</XnaCrossPlatformGroupID>
+    <XnaCrossPlatformGroupID>4ba2323c-2495-4270-888d-6bd865fbacb1</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <Thumbnail>GameThumbnail.png</Thumbnail>
@@ -107,17 +107,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AngleHelper.cs" />
-    <Compile Include="Brique.cs" />
-    <Compile Include="LigneDebug.cs" />
-    <Compile Include="PrimitiveBatch.cs" />
+    <Compile Include="aide\AngleHelper.cs" />
+    <Compile Include="aide\PrimitiveBatch.cs" />
+    <Compile Include="entities\Brique.cs" />
+    <Compile Include="entities\ILoadAndDraw.cs" />
+    <Compile Include="entities\LigneDebug.cs" />
+    <Compile Include="entities\Robot.cs" />
+    <Compile Include="entities\RobotAutomatique.cs" />
+    <Compile Include="entities\RobotManuel.cs" />
+    <Compile Include="entities\Souris.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Robot.cs" />
-    <Compile Include="RobotAutomatique.cs" />
-    <Compile Include="RobotManuel.cs" />
-    <Compile Include="Souris.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
