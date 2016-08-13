@@ -29,7 +29,7 @@ namespace JeuxDesRobots
 					break;
 				case Phase.ennuie:
 					pointAviser = new Vector2(Game1.ra.Next(0,1000), Game1.ra.Next(0,700));
-			//		speedBase = 0.15f;
+				//	speedBase = 0.15f;
 					phaseEnCour = Phase.PasDeTravail;
 					break;
 				case Phase.viseUneBrique:
@@ -67,7 +67,7 @@ namespace JeuxDesRobots
 					if (speed < 0.001)
 					{
 						//peut tourner en rond pas loind d'ici
-						if (Vector2.DistanceSquared(Position, pointAviser) < distanceProbleme+100)
+						if (Vector2.DistanceSquared(Position, pointAviser) < distanceProbleme)
 						{
 							speed = speedBase;
 							Console.WriteLine("NAAAAAAAAAAAANNNNNNNNNNNNNNNNNNNNNN");

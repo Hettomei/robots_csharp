@@ -37,7 +37,7 @@ namespace JeuxDesRobots
 		protected float speed;
 		protected float rotation;
 		protected Color couleur;
-		public float size;
+		protected float size;
 		public Vector2 positionFinal;
 
 
@@ -70,8 +70,8 @@ namespace JeuxDesRobots
 		{
 			//
 			this.speed = 0;
-			this.positionFinal = new Vector2(500, 380);
 			this.listePoints = new List<Vector2>(4); //My research shows that capacity can improve performance by nearly two times for adding elements
+			this.positionFinal = new Vector2(500, 380);
 			
 			this.size = size;
 
@@ -106,8 +106,6 @@ namespace JeuxDesRobots
 		//Enregistre tous les vecteurs à la bonne position de l'écran à la bonne taille en fonction du modele
 		private void initialiseLaBaseDesPoints(float rotation)
 		{
-			this.listePoints = new List<Vector2>(4); //My research shows that capacity can improve performance by nearly two times for adding elements
-
 			foreach (Vector2 v in modeleBriquePoints)
 			{
 				//Multiplie de cette facon car le modele est basé sur un axe classique
@@ -115,19 +113,6 @@ namespace JeuxDesRobots
 				listePoints.Add(Vector2.Multiply(v, new Vector2(size, -size)) + this.position);
 			}
 			calculEmplacementPointsApresRotation(rotation);
-		}
-
-		//Enregistre tous les vecteurs à la bonne position de l'écran à la bonne taille en fonction du modele
-		public void changeTailleBrique()
-		{
-			this.listePoints = new List<Vector2>(4); //My research shows that capacity can improve performance by nearly two times for adding elements
-
-			foreach (Vector2 v in modeleBriquePoints)
-			{
-				//Multiplie de cette facon car le modele est basé sur un axe classique
-				//C# inverse le Y
-				listePoints.Add(Vector2.Multiply(v, new Vector2(size, -size)) + this.position);
-			}
 		}
 
 		public virtual void LoadContent(PrimitiveBatch primitive)
@@ -171,7 +156,7 @@ namespace JeuxDesRobots
 
 		public bool EstArriveAdestination()
 		{
-			return Vector2.DistanceSquared(position, positionFinal) < 50;
+			return Vector2.DistanceSquared(position, positionFinal) < 300;
 		}
 	}
 }
