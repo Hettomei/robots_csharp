@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace JeuxDesRobots
 {
-    abstract class Robot
+    class Brique
     {
         private PrimitiveBatch primitiveBatch;
         public Vector2 position;
@@ -20,24 +20,27 @@ namespace JeuxDesRobots
         protected float speed;
         protected float rotation;
         protected Color couleur;
-        protected float robotSize;
+        protected float sizeX;
+        protected float sizeY;
+        
 
         /// <summary>
         /// Initialise les variables du Sprite
         /// </summary>
         public virtual void Initialize()
         {
-            Initialize(new Vector2(500, 300), 0.2f, Color.Red, 0f, 50f);
+            Initialize(new Vector2(500, 300), 0.2f, Color.Red, 0f, 50f, 25f);
         }
 
-        public virtual void Initialize(Vector2 position, float speed, Color couleur, float rotation, float robotsize)
+        public virtual void Initialize(Vector2 position, float speed, Color couleur, float rotation, float sizeX, float sizeY)
         {
             this.position = position;
             this.direction = new Vector2(0,0); //Commence le nez en haut // a recalculer avec angle
             this.speed = speed;
             this.couleur = couleur;
             this.rotation = rotation;
-            this.robotSize = robotsize;
+            this.sizeX = sizeX;
+            this.sizeY = sizeY;
         }
         public virtual void LoadContent(PrimitiveBatch primitive)
         {
@@ -48,8 +51,12 @@ namespace JeuxDesRobots
         /// Met à jour les variables du sprite
         /// </summary>
         /// <param name="gameTime">Le GameTime associé à la frame</param>
-        public abstract void Update(GameTime gameTime);
-        public abstract void HandleInput(KeyboardState keyboardState);
+        public void Update(GameTime gameTime)
+        {
+            //direction = AngleHelper.getPointAfterRotate(rotation, -Vector2.UnitY, Vector2.Zero);
+            //position += direction * speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+        }
+        public void HandleInput(KeyboardState keyboardState) { }
 
         /// <summary>
         /// Dessine le sprite en utilisant ses attributs et le spritebatch donné
@@ -63,8 +70,7 @@ namespace JeuxDesRobots
 
         private void drawRobot()
         {
-            DrawRotateSquare();
-            DrawRotateNoze();
+            DrawRotateBrique();
         }
 
         /// <summary>
@@ -74,15 +80,15 @@ namespace JeuxDesRobots
         /// <param name="size"></param>
         /// <param name="angle">en degré, rotation sens horaires</param>
         /// <param name="color"></param>
-        private void DrawRotateSquare()
+        private void DrawRotateBrique()
         {
             //position -> le centre
             // tell the primitive batch to start drawing lines
             primitiveBatch.Begin(PrimitiveType.LineList);
-            Vector2 hautGauche = position + new Vector2(-(robotSize / 2));
-            Vector2 hautDroit = hautGauche + new Vector2(robotSize, 0f);
-            Vector2 basGauche = hautGauche + new Vector2(0f, robotSize);
-            Vector2 basdroit = basGauche + new Vector2(robotSize, 0f);
+            Vector2 hautGauche = position + new Vector2(-(sizeX / 2), -(sizeY / 2));
+            Vector2 hautDroit = hautGauche + new Vector2(sizeX, 0f);
+            Vector2 basGauche = hautGauche + new Vector2(0f, sizeY);
+            Vector2 basdroit = basGauche + new Vector2(sizeX, 0f);
 
             hautGauche = AngleHelper.getPointAfterRotate(rotation, hautGauche, position);
             hautDroit = AngleHelper.getPointAfterRotate(rotation, hautDroit, position);
@@ -103,34 +109,5 @@ namespace JeuxDesRobots
 
             primitiveBatch.End();
         }
-        public Vector2 getPointNoze()
-        {
-            Vector2 basGauche = position + new Vector2(-(robotSize / 2));
-            Vector2 hautmilieu = basGauche + new Vector2(robotSize / 2, -robotSize);
-            
-            return AngleHelper.getPointAfterRotate(rotation, hautmilieu, position);;
-        }
-        private void DrawRotateNoze()
-        {
-            //position -> le centre
-            primitiveBatch.Begin(PrimitiveType.LineList);
-            Vector2 basGauche = position + new Vector2(-(robotSize / 2));
-            Vector2 hautmilieu = basGauche + new Vector2(robotSize / 2, -robotSize);
-            Vector2 basdroit = hautmilieu + new Vector2(robotSize / 2, robotSize);
-
-            basGauche = AngleHelper.getPointAfterRotate(rotation, basGauche, position);
-            hautmilieu = AngleHelper.getPointAfterRotate(rotation, hautmilieu, position);
-            basdroit = AngleHelper.getPointAfterRotate(rotation, basdroit, position);
-            
-            primitiveBatch.AddVertex(basGauche, couleur);
-            primitiveBatch.AddVertex(hautmilieu, couleur);
-
-            primitiveBatch.AddVertex(hautmilieu, couleur);
-            primitiveBatch.AddVertex(basdroit, couleur);
-
-            primitiveBatch.End();
-        }
-
-
     }
 }
