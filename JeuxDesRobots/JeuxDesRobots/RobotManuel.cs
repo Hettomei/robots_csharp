@@ -40,11 +40,11 @@ namespace JeuxDesRobots
 
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                rotation -= 2f;
+                rotation -= vitesse_rotation;
             }
             else if (keyboardState.IsKeyDown(Keys.Right))
             {
-                rotation += 2f;
+                rotation += vitesse_rotation;
             }
         }
 

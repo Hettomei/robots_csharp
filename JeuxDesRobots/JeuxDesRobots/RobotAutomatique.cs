@@ -14,19 +14,30 @@ namespace JeuxDesRobots
 {
     class RobotAutomatique : Robot
     {
-
+        
         /// <summary>
         /// Met à jour les variables du sprite
         /// </summary>
         /// <param name="gameTime">Le GameTime associé à la frame</param>
         public override void Update(GameTime gameTime)
         {
-          //  rotation += 1f;
-         //   speed = 0.1f;
-            direction = AngleHelper.getPointAfterRotate(rotation, -Vector2.UnitY, Vector2.Zero);
-            position += direction * speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (LaBrique != null)
+            {
+                double angle = AngleHelper.AngleOfView(this.position, PositionNez, LaBrique.position);
+                if (angle > 0.02)
+                {
+                    rotation += vitesse_rotation;
+                }
+                else if (angle < -0.02)
+                {
+                    rotation -= vitesse_rotation;
+                }
+                speed = 0.5f;
+                direction = AngleHelper.getPointAfterRotate(rotation, -Vector2.UnitY, Vector2.Zero);
+                position += direction * speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
         }
-
+        
                 /// <summary>
         /// Permet de gérer les entrées du joueur
         /// </summary>

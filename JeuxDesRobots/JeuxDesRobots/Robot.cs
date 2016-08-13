@@ -19,8 +19,27 @@ namespace JeuxDesRobots
         protected Vector2 direction;
         protected float speed;
         protected float rotation;
+        protected float vitesse_rotation;
         protected Color couleur;
         protected float robotSize;
+        private Vector2 positionNez;
+
+        private Brique laBrique;
+
+        public Brique LaBrique
+        {
+            get { return laBrique; }
+            set { laBrique = value; }
+        }
+
+        public Vector2 PositionNez
+        {
+            get {
+                Vector2 hautmilieu = position + new Vector2(-(robotSize / 2)) + new Vector2(robotSize / 2, -robotSize);
+                return AngleHelper.getPointAfterRotate(rotation, hautmilieu, position);
+            }
+            set { positionNez = value; }
+        }
 
         /// <summary>
         /// Initialise les variables du Sprite
@@ -28,6 +47,7 @@ namespace JeuxDesRobots
         public virtual void Initialize()
         {
             Initialize(new Vector2(500, 300), 0.2f, Color.Red, 0f, 50f);
+           
         }
 
         public virtual void Initialize(Vector2 position, float speed, Color couleur, float rotation, float robotsize)
@@ -36,6 +56,7 @@ namespace JeuxDesRobots
             this.direction = new Vector2(0,0); //Commence le nez en haut // a recalculer avec angle
             this.speed = speed;
             this.couleur = couleur;
+            vitesse_rotation = 7f;
             this.rotation = rotation;
             this.robotSize = robotsize;
         }
@@ -103,13 +124,7 @@ namespace JeuxDesRobots
 
             primitiveBatch.End();
         }
-        public Vector2 getPointNoze()
-        {
-            Vector2 basGauche = position + new Vector2(-(robotSize / 2));
-            Vector2 hautmilieu = basGauche + new Vector2(robotSize / 2, -robotSize);
-            
-            return AngleHelper.getPointAfterRotate(rotation, hautmilieu, position);;
-        }
+
         private void DrawRotateNoze()
         {
             //position -> le centre

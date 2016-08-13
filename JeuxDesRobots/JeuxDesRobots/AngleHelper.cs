@@ -45,21 +45,23 @@ namespace JeuxDesRobots
 
             cosinus = (a1 * b1 + a2 * b2) / (a * b);
 
+            if ((int)cosinus == 1)
+                return 0;
+
             t = Math.Acos(cosinus);
             t = MathHelper.ToDegrees((float)t);
 
             return CounterClockWise(pointCentral, pointRobotNez, pointBrique) * t;
         }
 
-        public static int CounterClockWise(Vector2 pointDeRotation, Vector2 point1, Vector2 point2)
+        public static int CounterClockWise(Vector2 pointCentral, Vector2 pointRobotNez, Vector2 pointBrique)
         {
             double dx1, dx2, dy1, dy2;
 
-            dx1 = point1.X - pointDeRotation.X;
-            dy1 = point1.Y - pointDeRotation.Y;
-
-            dx2 = point2.X - pointDeRotation.X;
-            dy2 = point2.Y - pointDeRotation.Y;
+            dx1 = pointRobotNez.X - pointCentral.X;
+            dy1 = pointRobotNez.Y - pointCentral.Y;
+            dx2 = pointBrique.X - pointCentral.X;
+            dy2 = pointBrique.Y - pointCentral.Y;
 
             if ((dx1 * dy2) > (dy1 * dx2))
                 return (+1);
