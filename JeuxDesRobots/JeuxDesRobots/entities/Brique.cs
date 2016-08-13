@@ -25,9 +25,10 @@ namespace JeuxDesRobots
 			{
 
 				int i = 0;
-				foreach (Vector2 v in modeleBriquePoints)
+				Vector2 nouvelleEmplacement = value - position;
+				while (i < listePoints.Count)
 				{
-					listePoints[i] = Vector2.Multiply(v, new Vector2(size, -size)) + value;
+					listePoints[i] += nouvelleEmplacement;
 					i++;
 				}
 				position = value;
@@ -36,7 +37,7 @@ namespace JeuxDesRobots
 		protected float speed;
 		protected float rotation;
 		protected Color couleur;
-		protected float size;
+		public float size;
 		public Vector2 positionFinal;
 
 
@@ -69,20 +70,16 @@ namespace JeuxDesRobots
 		{
 			//
 			this.speed = 0;
+			this.positionFinal = new Vector2(500, 380);
 			this.listePoints = new List<Vector2>(4); //My research shows that capacity can improve performance by nearly two times for adding elements
-			this.positionFinal = new Vector2(100, 650);
-			foreach (Vector2 v in modeleBriquePoints)
-			{
-				listePoints.Add(Vector2.Zero);
-			}
-			//
+			
 			this.size = size;
 
 			this.Position = position;
 			this.couleur = couleur;
 			this.rotation = rotation;
 
-			calculEmplacementPointsApresRotation(rotation);
+			initialiseLaBaseDesPoints(rotation);
 
 		}
 
@@ -103,6 +100,33 @@ namespace JeuxDesRobots
 					listePoints[i] = AngleHelper.getPointAfterRotate(listePoints[i], position, theta);
 					i++;
 				}
+			}
+		}
+
+		//Enregistre tous les vecteurs à la bonne position de l'écran à la bonne taille en fonction du modele
+		private void initialiseLaBaseDesPoints(float rotation)
+		{
+			this.listePoints = new List<Vector2>(4); //My research shows that capacity can improve performance by nearly two times for adding elements
+
+			foreach (Vector2 v in modeleBriquePoints)
+			{
+				//Multiplie de cette facon car le modele est basé sur un axe classique
+				//C# inverse le Y
+				listePoints.Add(Vector2.Multiply(v, new Vector2(size, -size)) + this.position);
+			}
+			calculEmplacementPointsApresRotation(rotation);
+		}
+
+		//Enregistre tous les vecteurs à la bonne position de l'écran à la bonne taille en fonction du modele
+		public void changeTailleBrique()
+		{
+			this.listePoints = new List<Vector2>(4); //My research shows that capacity can improve performance by nearly two times for adding elements
+
+			foreach (Vector2 v in modeleBriquePoints)
+			{
+				//Multiplie de cette facon car le modele est basé sur un axe classique
+				//C# inverse le Y
+				listePoints.Add(Vector2.Multiply(v, new Vector2(size, -size)) + this.position);
 			}
 		}
 
@@ -147,7 +171,7 @@ namespace JeuxDesRobots
 
 		public bool EstArriveAdestination()
 		{
-			return Vector2.DistanceSquared(position, positionFinal) < 300;
+			return Vector2.DistanceSquared(position, positionFinal) < 50;
 		}
 	}
 }

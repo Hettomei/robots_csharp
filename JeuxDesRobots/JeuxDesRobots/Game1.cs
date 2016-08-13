@@ -23,30 +23,26 @@ namespace JeuxDesRobots
 		private MouseState mouseState;
 		private PrimitiveBatch primitiveBatch;
 		private SpriteFont _font;
-		private Random ra = new Random();
+		public static Random ra = new Random();
 
 		//Ajoute automatiquement le texte en dessous
 		private Vector2 textAffiche;
 		private Vector2 ajoutTextAffiche = new Vector2(0, 20);
-		private Vector2 centreEcran;
 
 		private List<ILoadAndDraw> listeAffichage;
 
 		private Souris affichageSouris;
 
-		private const int NBROBOTS = 1;
-		private const int NBBRIQUES = 1;
+		private const int NBROBOTS = 200;
+		private const int NBBRIQUES = 1000;
 
 		private Robot[] les_robots01;
 		private Brique[] les_brique01;
 		private List<Brique> les_brique_restantes;
 
-		private LigneDebug axeX;
-		private LigneDebug axeY;
-		private LigneDebug centreToSouris;
-		//private Robot auto;
-		private Brique brique;
-		private Brique2 brique2;
+		private int clique = 0;
+		private float affiche_vitesse_robots = 0;
+		private int ralentit = 0;
 
 		public Game1()
 		{
@@ -54,7 +50,6 @@ namespace JeuxDesRobots
 			Content.RootDirectory = "Content";
 			graphics.PreferredBackBufferWidth = 1024;
 			graphics.PreferredBackBufferHeight = 768;
-			centreEcran = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
 		}
 
 		/// <summary>
@@ -77,8 +72,12 @@ namespace JeuxDesRobots
 			for (int i = 0; i < NBBRIQUES; i++)
 			{
 				les_brique01[i] = new Brique();
-				les_brique01[i].Initialize(new Vector2(ra.Next(10, 1000), ra.Next(10, 700)), Color.Black, ra.Next(0, 360), ra.Next(2, 10));
+				//les_brique01[i].Initialize(new Vector2(ra.Next(10, 1000), ra.Next(10, 700)), Color.Black, ra.Next(0, 360), ra.Next(5, 10)); //tout ecran
+				//les_brique01[i].Initialize(new Vector2(ra.Next(400, 600), ra.Next(350, 400)), Color.Black, ra.Next(0, 360), ra.Next(5, 10)); //oncentré au centre
+				//les_brique01[i].Initialize(new Vector2(ra.Next(1000, 1000), ra.Next(700, 700)), Color.Black, ra.Next(0, 360), ra.Next(5, 10)); //concentré bas droite
 				//les_brique01[i].Initialize(new Vector2(ra.Next(500, 1000), ra.Next(10, 500)), Color.Black, ra.Next(0, 360), ra.Next(2, 10));
+				//les_brique01[i].Initialize(new Vector2(ra.Next(10, 1000), ra.Next(600, 750)), Color.Black, ra.Next(0, 360), ra.Next(1, 2)); //toute la zone du bas
+				les_brique01[i].Initialize(new Vector2(100, 600), Color.Black, 45, 4); //tout au meme point
 				listeAffichage.Add(les_brique01[i]);
 			}
 			les_brique_restantes = les_brique01.ToList();
@@ -88,9 +87,9 @@ namespace JeuxDesRobots
 			for (int i = 0; i < NBROBOTS; i++)
 			{
 				les_robots01[i] = new RobotAutomatique();
-				les_robots01[i].Initialize(new Vector2(ra.Next(10, 950), ra.Next(10, 760)), Color.Red, 0, ra.Next(10,15));
-			//	les_robots01[i].Initialize(new Vector2(i * 10 + 10, 500), Color.Red, i * 3 + 60, 5);
-			//	les_robots01[i].Initialize(Vector2.Zero, Color.Red,90, 5);
+				les_robots01[i].Initialize(new Vector2(ra.Next(10, 950), ra.Next(10, 760)), Color.Red, 0, ra.Next(2, 5));
+				//	les_robots01[i].Initialize(new Vector2(i * 10 + 10, 500), Color.Red, i * 3 + 60, 5);
+				//	les_robots01[i].Initialize(Vector2.Zero, Color.Red,90, 5);
 
 				if (les_brique01.Length > i)
 				{
@@ -100,29 +99,12 @@ namespace JeuxDesRobots
 				listeAffichage.Add(les_robots01[i]);
 			}
 
-			axeX = new LigneDebug();
-			axeY = new LigneDebug();
-			centreToSouris = new LigneDebug();
-			brique = new Brique();
-			brique2 = new Brique2();
-			//auto = new RobotAutomatique();
+			//afficherText.afficherTim(les_brique01);
+			//afficherText.afficherTimLeR500(les_brique01);
+			//afficherText.dessinSoleilMaisonGuguss(les_brique01);
+			//afficherText.bonjourLudo1000PetiteBrique(les_brique01);
 
-			axeX.Initialize(new Vector2(0, centreEcran.Y), new Vector2(centreEcran.X * 2, centreEcran.Y));
-			axeY.Initialize(new Vector2(centreEcran.X, 0), new Vector2(centreEcran.X, centreEcran.Y * 2));
-			centreToSouris.Initialize(centreEcran, Vector2.Zero, Color.White);
-			brique.Initialize(Vector2.Add(centreEcran, new Vector2(0, -100)), Color.Black, 45, 10);
-			brique2.Initialize(centreEcran, Color.Black, 0, 20);
-			//auto.Initialize(centreEcran, Color.Black, 0, 50);
-			//auto.LaBrique = brique;
-
-			listeAffichage.Add(axeX);
-			listeAffichage.Add(axeY);
-			listeAffichage.Add(centreToSouris);
-			listeAffichage.Add(brique);
-			listeAffichage.Add(brique2);
-			listeAffichage.Add(affichageSouris);
-			//listeAffichage.Add(auto);
-
+			afficherText.AngieMaCherie(les_brique01);
 			base.Initialize();
 		}
 
@@ -161,7 +143,6 @@ namespace JeuxDesRobots
 		{
 			keyboardState = Keyboard.GetState();
 			mouseState = Mouse.GetState();
-			Vector2 vSouris = new Vector2(mouseState.X, mouseState.Y);
 
 			// Allows the game to exit
 			if ((GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
@@ -171,9 +152,102 @@ namespace JeuxDesRobots
 			if (keyboardState.IsKeyDown(Keys.R))
 				this.Initialize();
 
-			if (keyboardState.IsKeyDown(Keys.Space))
-				brique2.Update(gameTime);
+			//ralentit les robots
+			if (keyboardState.IsKeyDown(Keys.Down)){
+				foreach (Robot r in les_robots01)
+				{
 
+						r.speedBase -= 0.01f;
+						if (r.speedBase < 0.0001f)
+						{
+							r.speedBase = 0.0002f;
+						}
+					
+				}
+				if (les_robots01.Length > 0)
+				{
+					affiche_vitesse_robots = les_robots01[0].speedBase;		 
+				}
+			}
+			//accelere les robots
+			if (keyboardState.IsKeyDown(Keys.Up))
+			{
+				foreach (Robot r in les_robots01)
+				{
+
+						r.speedBase += 0.01f;
+					
+				}
+				if (les_robots01.Length > 0)
+				{
+					affiche_vitesse_robots = les_robots01[0].speedBase;
+				}
+			}
+
+			//augmente la taille des robots
+			if (keyboardState.IsKeyDown(Keys.T))
+			{
+				foreach (Robot r in les_robots01)
+				{
+					r.robotSize += 0.1f;
+					r.changeTailleRobot();
+				}
+			}
+
+			//reduit la taille des robots
+			if (keyboardState.IsKeyDown(Keys.G))
+			{
+				foreach (Robot r in les_robots01)
+				{
+					r.robotSize -= 0.1f;
+					r.changeTailleRobot();
+				}
+			}
+
+			//reduit la taille des brique
+			if (keyboardState.IsKeyDown(Keys.H))
+			{
+				foreach (Brique b in les_brique01)
+				{
+					b.size -= 0.1f;
+					b.changeTailleBrique();
+				}
+			}
+
+			//augmente la taille des brique
+			if (keyboardState.IsKeyDown(Keys.Y))
+			{
+				foreach (Brique b in les_brique01)
+				{
+					b.size += 0.1f;
+					b.changeTailleBrique();
+				}
+			}
+
+			if (keyboardState.IsKeyDown(Keys.Space))
+			{
+				ralentit++;
+				if (ralentit % 5 == 0)
+				{
+					if (clique < les_brique01.Length)
+					{
+						les_brique01[clique].Position = new Vector2(mouseState.X, mouseState.Y);
+						Console.WriteLine("les_brique01[" + clique + "].positionFinal = new Vector2(" + mouseState.X + ", " + mouseState.Y + ");");
+						clique++;
+						ralentit = 0;
+					}
+				}
+			}
+
+			if (keyboardState.IsKeyDown(Keys.N))
+			{
+				ralentit++;
+				if (ralentit % 5 == 0)
+				{
+					clique += (clique > 0 ? -1 : 0);
+					Console.WriteLine(clique + " a annuler");
+				}
+			}
 			// TODO: Add your update logic here
 			//brique01.HandleInput(mouseState);
 
@@ -187,19 +261,12 @@ namespace JeuxDesRobots
 
 				r.Update(gameTime);
 			}
-			foreach (Brique b1 in les_brique01)
-			{
-				b1.Update(gameTime);
-			}
+			//foreach (Brique b1 in les_brique01)
+			//{
+			//    b1.Update(gameTime);
+			//}
 
 			affichageSouris.HandleInput(mouseState);
-
-
-			brique.Position = vSouris;
-			//auto.pointAviser = vSouris;
-			//auto.Update(gameTime);
-
-			centreToSouris.setPosition2(vSouris);
 
 			base.Update(gameTime);
 		}
@@ -211,7 +278,7 @@ namespace JeuxDesRobots
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
-			textAffiche = new Vector2(600, -20);
+			textAffiche = new Vector2(10, 600);
 
 			// TODO: Add your drawing code here
 			foreach (ILoadAndDraw ild in listeAffichage)
@@ -220,7 +287,15 @@ namespace JeuxDesRobots
 			}
 
 			spriteBatch.Begin();
-			spriteBatch.DrawString(_font, "X : " + mouseState.X + " -- Y : " + mouseState.Y, textAffiche += ajoutTextAffiche, Color.White);
+			//spriteBatch.DrawString(_font, "X : " + mouseState.X + " -- Y : " + mouseState.Y, textAffiche += ajoutTextAffiche, Color.White);
+			spriteBatch.DrawString(_font, "Espace : deplace les briques", textAffiche += ajoutTextAffiche, Color.White);
+			spriteBatch.DrawString(_font, "N :annule le déplacement briques", textAffiche += ajoutTextAffiche, Color.White);
+			spriteBatch.DrawString(_font, "Bas/Haut : reduit/augmente la vitesse max", textAffiche += ajoutTextAffiche, Color.White);
+			spriteBatch.DrawString(_font, "T/G : augmente/reduit la taille des robots", textAffiche += ajoutTextAffiche, Color.White);
+			spriteBatch.DrawString(_font, "Y/H : augmente/reduit la taille des briques", textAffiche += ajoutTextAffiche, Color.White);
+			spriteBatch.DrawString(_font, "Vitesse : " + affiche_vitesse_robots, textAffiche += ajoutTextAffiche, Color.White);
+			//spriteBatch.DrawString(_font, "" + clique, textAffiche += ajoutTextAffiche, Color.White);
+			
 
 			spriteBatch.End();
 			base.Draw(gameTime);

@@ -12,8 +12,9 @@ using Microsoft.Xna.Framework.Media;
 
 namespace JeuxDesRobots
 {
-	class Brique2 : ILoadAndDraw
+	class Dechet : ILoadAndDraw
 	{
+		private static Random ra = new Random();
 		private PrimitiveBatch primitiveBatch;
 
 		private Vector2 position;
@@ -25,9 +26,10 @@ namespace JeuxDesRobots
 			{
 
 				int i = 0;
-				foreach (Vector2 v in modeleBriquePoints)
+				Vector2 nouvelleEmplacement = value - position;
+				while (i < listePoints.Count)
 				{
-					listePoints[i] = Vector2.Multiply(v, new Vector2(size, -size)) + value;
+					listePoints[i] += nouvelleEmplacement;
 					i++;
 				}
 				position = value;
@@ -44,17 +46,8 @@ namespace JeuxDesRobots
 
 		public List<Vector2> listePoints;
 		//L'ordre DOIT correspondre à enum NomDesPoints !
-		protected Vector2[] modeleBriquePoints = new Vector2[4]{
-			new Vector2(-2, 1), 
-			new Vector2(2, 1),
-			new Vector2(2, -1),
-			new Vector2(-2, -1),
-		};
+		protected Vector2[] modeleDiforme;
 
-		protected enum NomDesPoints //L'ordre est hyper important car ce sera l'ordre de tracage
-		{
-			_1hautGauche, _2hautDroit, _3basDroit, _4basGauche
-		}
 		#endregion
 
 		/// <summary>
@@ -70,20 +63,34 @@ namespace JeuxDesRobots
 			//
 			this.speed = 0;
 			this.listePoints = new List<Vector2>(4); //My research shows that capacity can improve performance by nearly two times for adding elements
-			this.positionFinal = new Vector2(100, 650);
-			foreach (Vector2 v in modeleBriquePoints)
-			{
-				listePoints.Add(Vector2.Zero);
-			}
-			//
+			this.positionFinal = new Vector2(500, 380);
+			
 			this.size = size;
 
 			this.Position = position;
 			this.couleur = couleur;
 			this.rotation = rotation;
 
-			calculEmplacementPointsApresRotation(rotation);
+			genererModeleDiforme();
+			initialiseLaBaseDesPoints(rotation);
 
+		}
+
+		private void genererModeleDiforme()
+		{
+			int nbDePoint = ra.Next(2, 10);
+			this.modeleDiforme = new Vector2[nbDePoint];
+			float theta;
+
+			Vector2 pointPrecedant = new Vector2(0,1);
+			int i = 0;
+			while (i < nbDePoint)
+			{
+				theta = MathHelper.ToRadians(ra.Next(0, 45));
+				modeleDiforme[i] = AngleHelper.getPointAfterRotate(pointPrecedant,Vector2.Zero,theta);
+				pointPrecedant = modeleDiforme[i];
+				i++;
+			}
 		}
 
 		/// <summary>
@@ -106,6 +113,18 @@ namespace JeuxDesRobots
 			}
 		}
 
+		//Enregistre tous les vecteurs à la bonne position de l'écran à la bonne taille en fonction du modele
+		private void initialiseLaBaseDesPoints(float rotation)
+		{
+			foreach (Vector2 v in modeleDiforme)
+			{
+				//Multiplie de cette facon car le modele est basé sur un axe classique
+				//C# inverse le Y
+				listePoints.Add(Vector2.Multiply(v, new Vector2(size, -size)) + this.position);
+			}
+			calculEmplacementPointsApresRotation(rotation);
+		}
+
 		public virtual void LoadContent(PrimitiveBatch primitive)
 		{
 			primitiveBatch = primitive;
@@ -117,27 +136,6 @@ namespace JeuxDesRobots
 		/// <param name="gameTime">Le GameTime associé à la frame</param>
 		public void Update(GameTime gameTime)
 		{
-			//calculEmplacementPointsApresRotation(90);
-			float angleEnDegre = 3;
-			float theta = MathHelper.ToRadians(angleEnDegre);
-
-			Vector2 v = new Vector2(1, 1);
-			Vector2 vAxeX = new Vector2(0, 1);
-
-			v.Normalize();
-			vAxeX.Normalize();
-
-			Console.WriteLine(Vector2.Dot(v,  vAxeX));
-			Console.WriteLine(Math.Acos(Vector2.Dot(v, vAxeX)));
-			Console.WriteLine(MathHelper.ToDegrees((float)Math.Acos(Vector2.Dot(v, vAxeX))));
-
-			int i = 0;
-			while (i < listePoints.Count)
-			{
-				listePoints[i] = AngleHelper.getPointAfterRotate(listePoints[i], position, theta);
-				i++;
-			}
-
 		}
 		public void HandleInput(MouseState mouse)
 		{

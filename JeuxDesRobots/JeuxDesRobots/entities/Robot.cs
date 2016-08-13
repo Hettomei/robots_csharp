@@ -38,13 +38,12 @@ namespace JeuxDesRobots
 		public Vector2 pointAviser;
 
 		protected float speed;
-		protected float speedBase;
+		public float speedBase;
 		protected float vitesse_rotation;
 		protected float vitesse_rotation_base;
-		protected float angleAviser;
-		protected float angleEnCours;
 		protected Color couleur;
-		protected float robotSize;
+		public float robotSize;
+		protected float distanceProbleme;
 
 		#region Tous pour les points
 
@@ -75,7 +74,7 @@ namespace JeuxDesRobots
 
 		public enum Phase
 		{
-			PasDeTravail, viseUneBrique, transporteUneBrique
+			PasDeTravail, viseUneBrique, transporteUneBrique, ennuie
 		}
 		public Phase phaseEnCour;
 
@@ -117,7 +116,7 @@ namespace JeuxDesRobots
 		public virtual void Initialize(Vector2 position, Color couleur, float rotation, float robotsize)
 		{
 			this.position = position;
-			this.speed = 0.6f;
+			this.speed = 0.3f;
 			this.speedBase = speed;
 			this.vitesse_rotation = 7f;
 			this.vitesse_rotation_base = this.vitesse_rotation;
@@ -125,15 +124,15 @@ namespace JeuxDesRobots
 			this.robotSize = robotsize;
 			this.phaseEnCour = Phase.PasDeTravail;
 
-			this.listePoints = new List<Vector2>(7); //My research shows that capacity can improve performance by nearly two times for adding elements
-
 			initialiseLaBaseDesPoints(rotation);
 
+			this.distanceProbleme = Vector2.DistanceSquared(listePoints[numeroDuPointChaud], position);
 		}
 
 		//Enregistre tous les vecteurs à la bonne position de l'écran à la bonne taille en fonction du modele
 		private void initialiseLaBaseDesPoints(float rotation)
 		{
+			this.listePoints = new List<Vector2>(7); //(from a blog) My research shows that capacity can improve performance by nearly two times for adding elements
 			foreach (Vector2 v in modeleRobotPoints)
 			{
 				//Multiplie de cette facon car le modele est basé sur un axe classique
@@ -143,6 +142,17 @@ namespace JeuxDesRobots
 			calculEmplacementPointsApresRotation(rotation);
 		}
 
+				//Enregistre tous les vecteurs à la bonne position de l'écran à la bonne taille en fonction du modele
+		public void changeTailleRobot()
+		{
+			this.listePoints = new List<Vector2>(7); //(from a blog) My research shows that capacity can improve performance by nearly two times for adding elements
+			foreach (Vector2 v in modeleRobotPoints)
+			{
+				//Multiplie de cette facon car le modele est basé sur un axe classique
+				//C# inverse le Y
+				listePoints.Add(Vector2.Multiply(v, new Vector2(robotSize, -robotSize)) + this.position);
+			}
+		}
 		/// <summary>
 		/// Calcule l'emplacement des points apres une rotation
 		/// Si la rotation vaut 0, on ne touche pas les points

@@ -23,30 +23,36 @@ namespace JeuxDesRobots
 			switch (phaseEnCour)
 			{
 				case Phase.PasDeTravail:
-					pointAviser = new Vector2(100, 100);
+					//pointAviser = new Vector2(100, 100);
+					couleur = Color.White;
+
+					break;
+				case Phase.ennuie:
+					pointAviser = new Vector2(Game1.ra.Next(0,1000), Game1.ra.Next(0,700));
+			//		speedBase = 0.15f;
+					phaseEnCour = Phase.PasDeTravail;
 					break;
 				case Phase.viseUneBrique:
-					angleAviser = AngleHelper.AngleOfView(Position, listePoints[numeroDuPointChaud], LaBrique.Position);
-					angleEnCours = 0;
+				//	couleur = Color.Red;
 					break;
 				case Phase.transporteUneBrique:
-					angleAviser = AngleHelper.AngleOfView(Position, listePoints[numeroDuPointChaud], LaBrique.positionFinal);
-					angleEnCours = 0;
+				//	couleur = Color.Green;
 					pointAviser = LaBrique.positionFinal;
 					break;
 			}
 			if (Vector2.DistanceSquared(pointAviser, listePoints[numeroDuPointChaud]) > 10)
 			{
 				//D'abord on fait tourner le nez en visant la brique.:
-				////rotation en degré
-				//int max = 0;
-				//int sens = AngleHelper.determinerSiTournePositifOuNegatifPourRejoindreAutrePoint(Position, listePoints[numeroDuPointChaud], pointAviser, out max);
-				float rotation = 0;
-				rotation = vitesse_rotation_base;
-				angleEnCours += vitesse_rotation_base;
-				if (Math.Abs(angleAviser) < Math.Abs(angleEnCours)){
-					rotation = vitesse_rotation_base / 2;
-				}
+				//rotation en degré
+				int max = 0;
+				int sens = AngleHelper.determinerSiTournePositifOuNegatifPourRejoindreAutrePoint(Position, listePoints[numeroDuPointChaud], pointAviser, out max);
+				float rotation;
+
+				//permet de ne pas trop tourner;
+				if (vitesse_rotation < max)
+					rotation = vitesse_rotation * sens;
+				else
+					rotation = max * sens;
 
 				calculEmplacementPointsApresRotation(rotation);
 
@@ -58,8 +64,17 @@ namespace JeuxDesRobots
 				else
 				{
 					speed -= 0.006f;
-					if (speed < 0)
-						speed = 0.001f;
+					if (speed < 0.001)
+					{
+						//peut tourner en rond pas loind d'ici
+						if (Vector2.DistanceSquared(Position, pointAviser) < distanceProbleme+100)
+						{
+							speed = speedBase;
+							Console.WriteLine("NAAAAAAAAAAAANNNNNNNNNNNNNNNNNNNNNN");
+						}
+						else
+							speed = 0.0005f;
+					}
 				}
 
 				//On calcule la direction du robot, donc le vecteur du centre au nez puis on le fait avancer dans cette direction
@@ -78,9 +93,14 @@ namespace JeuxDesRobots
 				phaseEnCour = Phase.transporteUneBrique;
 
 			if (phaseEnCour == Phase.transporteUneBrique && LaBrique.EstArriveAdestination())
+			{
 				LaBrique = null;
+			}
 
-
+			if (phaseEnCour == Phase.PasDeTravail && Vector2.DistanceSquared( Position,pointAviser) < 1000)
+			{
+				phaseEnCour = Phase.ennuie;
+			}
 
 		}
 

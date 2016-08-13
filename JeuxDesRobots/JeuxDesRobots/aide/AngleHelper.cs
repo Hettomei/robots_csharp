@@ -28,15 +28,18 @@ namespace JeuxDesRobots
 				);
 		}
 
-		public static int determinerSiTournePositifOuNegatifPourRejoindreAutrePoint(Vector2 pointDeRotation, Vector2 pointABouger, Vector2 pointAViser)
+		public static int determinerSiTournePositifOuNegatifPourRejoindreAutrePoint(Vector2 pointDeRotation, Vector2 pointABouger, Vector2 pointAViser, out int max)
 		{
 			Vector2 point1 = Vector2.Subtract(pointDeRotation, pointABouger);
 			Vector2 point2 = Vector2.Subtract(pointDeRotation, pointAViser);
 			point1.Normalize();
 			point2.Normalize(); 
 			//Vector2.Dot(point1, point2) == 1 -> angle parallele
-			float test = Vector2.Dot(point1, point2);
-			if (test > 0.999 && test < 1.001 )
+			//Il faut changer ça car je calcul l'angle total à chaque fois au lieu de le calculer une unique foie et de prendre le temps de tourner en consequence
+			float eviteSaccade = Vector2.Dot(point1, point2);
+			max = (int)MathHelper.ToDegrees((float)Math.Acos(eviteSaccade));
+
+			if (eviteSaccade > 0.999 && eviteSaccade < 1.001 )
 			{
 				return 0;
 			}
@@ -56,6 +59,13 @@ namespace JeuxDesRobots
 			return (0);
 		}
 
+		/// <summary>
+		/// Calcul la taille de l'angle entre les 2 Points. Si l'angle est jugé suffisemment petit, renvoie "true"
+		/// </summary>
+		/// <param name="pointDeRotation"></param>
+		/// <param name="pointABouger"></param>
+		/// <param name="pointAViser"></param>
+		/// <returns></returns>
 		public static bool peutAvancer(Vector2 pointDeRotation, Vector2 pointABouger, Vector2 pointAViser)
 		{
 			Vector2 point1 = Vector2.Subtract(pointDeRotation, pointABouger);
@@ -63,8 +73,8 @@ namespace JeuxDesRobots
 			point1.Normalize();
 			point2.Normalize();
 			//Vector2.Dot(point1, point2) == 1 -> angle parallele
-			float test = Vector2.Dot(point1, point2);
-			if (test > 0.99 && test < 1.01)
+			float angleEntreLesPoints = Vector2.Dot(point1, point2);
+			if (angleEntreLesPoints > 0.99 && angleEntreLesPoints < 1.01)
 			{
 				return true;
 			}

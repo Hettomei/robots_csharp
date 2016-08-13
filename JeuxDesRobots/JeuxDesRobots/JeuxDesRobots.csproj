@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{EDFFE369-5BE0-469B-8CC7-76010356863B}</ProjectGuid>
+    <ProjectGuid>{96753B6D-1A4E-4ABA-9541-A91909ED1AAD}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -14,7 +14,7 @@
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>HiDef</XnaProfile>
-    <XnaCrossPlatformGroupID>41daf277-bbd1-4770-bf4d-48edd804d9e7</XnaCrossPlatformGroupID>
+    <XnaCrossPlatformGroupID>96c31016-76c5-4ac0-bf6a-cab39a8f59fb</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <Thumbnail>GameThumbnail.png</Thumbnail>
@@ -107,10 +107,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="aide\afficherText.cs" />
     <Compile Include="aide\AngleHelper.cs" />
     <Compile Include="aide\PrimitiveBatch.cs" />
     <Compile Include="entities\Brique.cs" />
-    <Compile Include="entities\Brique2.cs" />
+    <Compile Include="entities\Dechet.cs" />
     <Compile Include="entities\ILoadAndDraw.cs" />
     <Compile Include="entities\LigneDebug.cs" />
     <Compile Include="entities\Robot.cs" />
